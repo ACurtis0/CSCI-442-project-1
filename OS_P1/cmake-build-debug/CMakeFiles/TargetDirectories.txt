@@ -1,0 +1,3 @@
+/Users/Alex/CSCI-442-project-1/OS_P1/cmake-build-debug/CMakeFiles/OS_P1.dir
+/Users/Alex/CSCI-442-project-1/OS_P1/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/Alex/CSCI-442-project-1/OS_P1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
