@@ -2,15 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+/*
+Creates struct node for linked list:
+Holds the next pointer and string data 
+*/
 struct node
 {
 	char *str;
 	struct node *next;
 };
 
+/*
+Function: printReverseList
+Description: Recursively prints (in reverse) linked list with head input;
+Free line(strdup) memory and node(malloc) memory.
+*/
 void printReverseList(struct node *head, FILE *outFile);
-
 void printReverseList(struct node *head, FILE *outFile)
 {
 	if (head == NULL) {
@@ -18,12 +25,9 @@ void printReverseList(struct node *head, FILE *outFile)
 	}
 
 	printReverseList(head->next, outFile);
-	//Output to file
 	fprintf(outFile, "%s", head->str);
-	//Free line memory
 	char *line = head->str;
 	free(line);
-	//Free node memory
 	struct node* freeNode;
 	freeNode = head;
 	free(freeNode);
@@ -36,33 +40,32 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "usage: reverse <input> <output>\n");
 		exit(1);
 	}
+	
 
 	FILE *out_file;
 
-	//If there is an output file create variable file
+
+	/*
+	1) Check if there is an output file, if there is open the file
+	2) Check if input file is the same as the output file (prints error if it is)
+	3) Check if output file can be open (prints error if it cannot)
+	*/
 	if (argv[2] != NULL) {
-		//Check if input file is the same as the output file
 		if (strcmp(argv[1], argv[2]) == 0) {
 			fprintf(stderr, "error: input and output file must differ\n");
 			exit(1);
 		}
-		//Open output file
 		out_file = fopen(argv[2], "w");
-		//Check if output file can be open
 		if (out_file == NULL) {
 			fprintf(stderr, "error: cannot open file '%s'\n", argv[2]);
 			exit(1);
-	}
-	}
-	else {
+		}
+	} else {
 		out_file = stdout;
 	}
 
 	
-	
-
 	//Declare Variables
-	//_____________________________________
 	FILE *in_file;
 	char *line = NULL;
 	size_t len = 0;
@@ -72,62 +75,60 @@ int main(int argc, char *argv[])
 	struct node *newNode = NULL;
 	struct node *current = NULL;
 
-	//_____________________________________
 	
-	
-	
-
-	//Read the input file
+	/*
+	Reads input file 
+	Check if input file can be open (prints error if it cannot)
+	*/
 	in_file = fopen(argv[1], "r");
-
-	//If in_file can't open -> stderr
 	if (in_file == NULL) {
 		fprintf(stderr, "error: cannot open file '%s'\n", argv[1]);
 		exit(1);
 	}
 
 	
-	
+	//Reads each line in the file and stores it into a linked list structure
 	while (getline(&line, &len, in_file) != -1) {
-		//printf("%s", line);
 		count += 1;
-
-		// Create new Node with data
 		newNode = (struct node *)malloc(sizeof(struct node));
-		//Check for System Call Failure
+
+		//Check for System Call Failure (print error if fails)
 		if (newNode == NULL) {
-			fprintf(stderr, "error: malloc failed");
+			fprintf(stderr, "error: malloc failed\n");
 			exit(1);
 		}
 		
-		
-		newNode->str = strdup(line); // YAY
+		newNode->str = strdup(line);
+
+		//Check for System Call Failure (print error if fails)
 		if (newNode->str == NULL) {
-			fprintf(stderr, "error: strdup failed");
+			fprintf(stderr, "error: strdup failed\n");
 		}
+
 		newNode->next = NULL;
 
-		//if count == 1; (The node is the head)
+		/*
+		Checks for first node and makes it the head;
+		Else links the node to the end of the previous node
+		*/
 		if (count == 1) {
 			head = newNode;
 			current = newNode;
-		}
-		//Else link the previous node to the newnode and make the current node into the newnode
-		else {
-			count = 2; //Limits the count variable from being large
+		} else { 
+			count = 2; 		//Limits the count variable from being large
 			current->next = newNode;
 			current= newNode;
 		}
 	}
 
+	//Recursively print the reverse file
 	current = head;
 	printReverseList(current, out_file);
 
-
-	
+	//Close files and frees line ptr memory
 	fclose(in_file);
 	fclose(out_file);
-	free(line); // Deallocate the ptr in memory 
+	free(line); 
 
 	return 0;
 }
